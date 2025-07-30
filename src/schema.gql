@@ -22,14 +22,21 @@ enum TodoStatus {
 }
 
 type Query {
+  users: [UserEntity!]!
+  me(id: Int!): UserEntity!
   todos: [TodoEntity!]!
   todo(id: Float!): TodoEntity!
 }
 
 type Mutation {
+  createUser(input: CreateUserInput!): UserEntity!
   createTodo(input: CreateTodoInput!): TodoEntity!
   updateTodo(id: Int!, input: UpdateTodoInput!): TodoEntity!
   deleteTodo(id: Int!): TodoEntity!
+}
+
+input CreateUserInput {
+  username: String!
 }
 
 input CreateTodoInput {
