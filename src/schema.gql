@@ -1,0 +1,45 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserEntity {
+  id: ID!
+  username: String!
+}
+
+type TodoEntity {
+  id: ID!
+  title: String!
+  status: TodoStatus!
+  assignee: UserEntity!
+  assignedTo: UserEntity!
+}
+
+"""The status of the todo task"""
+enum TodoStatus {
+  ACTIVE
+  COMPLETED
+}
+
+type Query {
+  todos: [TodoEntity!]!
+  todo(id: Float!): TodoEntity!
+}
+
+type Mutation {
+  createTodo(input: CreateTodoInput!): TodoEntity!
+  updateTodo(id: Int!, input: UpdateTodoInput!): TodoEntity!
+  deleteTodo(id: Int!): TodoEntity!
+}
+
+input CreateTodoInput {
+  title: String!
+  assigneeId: Float!
+  assignedToId: Float!
+}
+
+input UpdateTodoInput {
+  title: String
+  assigneeId: Float
+  assignedToId: Float
+}
