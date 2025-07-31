@@ -1,61 +1,33 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { todos as TODOS_DATA } from './store/todo.store';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { TodoStatus } from './entity/todo.entity';
 import { CreateTodoInput } from './dto/create-todo.dto';
 import { UpdateTodoInput } from './dto/update-todo.dto';
+import { UserService } from 'src/user/user.service';
+import { TodoRepositoryInterface } from './interface/todo-respository.interface';
 
 @Injectable()
 export class TodoService {
-  private todos = TODOS_DATA;
+  constructor(
+    @Inject('TODO_REPO_TOKEN')
+    private readonly todoRepository: TodoRepositoryInterface,
+  ) {}
 
-  getTodos() {
-    return this.todos;
-  }
+  async createTodo(input: CreateTodoInput) {
+    const todo = await this.todoRepository.create(input);
 
-  getTodoById(id: number) {
-    const todo = this.todos.find((todo) => todo.id === id);
-    if (!todo) {
-      throw new NotFoundException('Todo with the given id not found');
-    }
     return todo;
   }
 
-  createTodo(input: CreateTodoInput) {
-    const newTodo = {
-      id: this.todos.length + 1,
-      ...input,
-      status: TodoStatus.ACTIVE,
-    };
-
-    this.todos.push(newTodo);
-
-    return newTodo;
+  async getAllTodos() {
+    return await this.todoRepository.findAll();
   }
 
-  updateTodo(id: number, input: UpdateTodoInput) {
-    const todoIndex = this.todos.findIndex((todo) => todo.id === id);
-    if (todoIndex === -1) {
+  async getTodoById(id: string) {
+    const todo = await this.todoRepository.findById(id);
+    if (!todo) {
       throw new NotFoundException('Todo with the given id not found');
     }
 
-    const todo = this.todos[todoIndex];
-    const updatedTodo = { ...todo, ...input };
-    this.todos[todoIndex] = updatedTodo;
-
-    return updatedTodo;
-  }
-
-  deleteTodo(id: number) {
-    const todoIndex = this.todos.findIndex((todo) => todo.id === id);
-    if (todoIndex === -1) {
-      throw new NotFoundException('Todod not found');
-    }
-
-    const deletedTodo = this.todos[todoIndex];
-    const newTodos = this.todos.filter((todo) => todo.id !== id);
-
-    this.todos = newTodos;
-
-    return deletedTodo;
+    return todo;
   }
 }

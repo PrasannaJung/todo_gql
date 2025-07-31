@@ -11,47 +11,65 @@ import { Query } from '@nestjs/graphql';
 import { TodoService } from './todo.service';
 import { UserEntity } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/user.service';
-import { TodoDataStore } from './store/todo.store';
 import { CreateTodoInput } from './dto/create-todo.dto';
 import { UpdateTodoInput } from './dto/update-todo.dto';
+import { CreateTodoResponse } from './response/create-todo.response';
+import { Todo, TodoDocument } from './schema/todo.schema';
 
 @Resolver(() => TodoEntity)
 export class TodoResolver {
   constructor(
     private readonly todoService: TodoService,
-    private readonly userService: UserService,
+    // private readonly userService: UserService,
   ) {}
 
   @Query(() => [TodoEntity], { name: 'todos' })
-  getTodos() {
-    return this.todoService.getTodos();
+  getTodos(): Promise<TodoDocument[]> {
+    return this.todoService.getAllTodos();
   }
 
   @Query(() => TodoEntity, { name: 'todo' })
-  getTodoById(@Args('id') id: number) {
+  getTodoById(@Args('id') id: string): Promise<TodoDocument> {
     return this.todoService.getTodoById(id);
   }
 
-  @ResolveField(() => UserEntity, { name: 'assignee' })
-  getAssignee(@Parent() parent: TodoDataStore) {
-    return this.userService.getUserById(parent.assigneeId);
+  @Mutation(() => TodoEntity)
+  async createTodo(
+    @Args('input') input: CreateTodoInput,
+  ): Promise<TodoDocument> {
+    return await this.todoService.createTodo(input);
   }
 
-  @Mutation(() => TodoEntity)
-  createTodo(@Args('input') input: CreateTodoInput) {
-    return this.todoService.createTodo(input);
-  }
+  // @Query(() => [TodoEntity])
+  // todosByUser(@Args('userId', { type: () => Int }) userId: number) {
+  //   return this.todoService.getTodosByUser(userId);
+  // }
 
-  @Mutation(() => TodoEntity)
-  updateTodo(
-    @Args('id', { type: () => Int }) id: number,
-    @Args('input') input: UpdateTodoInput,
-  ) {
-    return this.todoService.updateTodo(id, input);
-  }
+  // @ResolveField(() => UserEntity, { name: 'assignee' })
+  // getAssignee(@Parent() parent: TodoDataStore) {
+  //   return this.userService.getUserById(parent.assigneeId);
+  // }
 
-  @Mutation(() => TodoEntity)
-  deleteTodo(@Args('id', { type: () => Int }) id: number) {
-    return this.todoService.deleteTodo(id);
-  }
+  // @ResolveField(() => UserEntity, { name: 'assignedTo' })
+  // getAssignedTo(@Parent() parent: TodoDataStore) {
+  //   return this.userService.getUserById(parent.assignedToId);
+  // }
+
+  // @Mutation(() => TodoEntity)
+  // updateTodo(
+  //   @Args('id', { type: () => Int }) id: number,
+  //   @Args('input') input: UpdateTodoInput,
+  // ) {
+  //   return this.todoService.updateTodo(id, input);
+  // }
+
+  // @Mutation(() => TodoEntity)
+  // deleteTodo(@Args('id', { type: () => Int }) id: number) {
+  //   return this.todoService.deleteTodo(id);
+  // }
+
+  // @Mutation(() => TodoEntity)
+  // toggleComplete(@Args('id', { type: () => Int }) id: number) {
+  //   return this.todoService.toggleComplete(id);
+  // }
 }

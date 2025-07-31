@@ -1,25 +1,47 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserEntity } from './entity/user.entity';
-import { users as USERS_DATA } from './store/user.store';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserInput } from './dto/create-user.dto';
+import { TodoService } from 'src/todo/todo.service';
+import { UserRepository } from './user.repository';
+import { UserDocument } from './schema/user.schema';
+import { UserRepositoryInterface } from './interface/user-repository.interface';
 
 @Injectable()
 export class UserService {
-  private readonly users: UserEntity[] = USERS_DATA;
+  constructor(
+    private readonly todoService: TodoService,
+    @Inject('USER_REPO_TOKEN')
+    private readonly userRepository: UserRepositoryInterface,
+  ) {}
 
-  createUser(input: CreateUserInput) {
-    const newUser = { id: this.users.length + 1, ...input };
-    this.users.push(newUser);
-    return newUser;
+  async createUser(input: CreateUserInput): Promise<UserDocument> {
+    const existingUser = await this.userRepository.findByEmail(input.email);
+
+    if (existingUser) {
+      throw new NotFoundException('User with this email already exists');
+    }
+
+    return await this.userRepository.create(input);
   }
 
-  getAllUsers() {
-    return this.users;
+  async getAllUsers(): Promise<UserDocument[]> {
+    return await this.userRepository.findAll();
   }
 
-  getUserById(id: number): UserEntity {
-    const user = this.users.find((user) => user.id === id);
-    if (!user) throw new NotFoundException('User not found');
+  async getUserById(id: string): Promise<UserDocument> {
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw new NotFoundException('User with the given id not found');
+    }
     return user;
   }
+
+  // async deleteUser(id: string): Promise<UserDocument> {
+  //   const user = await this.userRepository.findById(id);
+  //   if (!user) {
+  //     throw new NotFoundException('User with the given id not found');
+  //   }
+
+  //   await this.todoService.deleteTodosMyUser(id);
+  //   return await this.userRepository.deleteById(id);
+  // }
 }

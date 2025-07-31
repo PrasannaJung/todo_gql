@@ -14,7 +14,7 @@ registerEnumType(TodoStatus, {
 @ObjectType()
 export class TodoEntity {
   @Field(() => ID)
-  id: number;
+  id: string;
 
   @Field()
   title: string;

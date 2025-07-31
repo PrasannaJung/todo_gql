@@ -5,6 +5,7 @@
 type UserEntity {
   id: ID!
   username: String!
+  email: String!
 }
 
 type TodoEntity {
@@ -23,30 +24,23 @@ enum TodoStatus {
 
 type Query {
   users: [UserEntity!]!
-  me(id: Int!): UserEntity!
+  user(id: String!): UserEntity!
   todos: [TodoEntity!]!
-  todo(id: Float!): TodoEntity!
+  todo(id: String!): TodoEntity!
 }
 
 type Mutation {
   createUser(input: CreateUserInput!): UserEntity!
   createTodo(input: CreateTodoInput!): TodoEntity!
-  updateTodo(id: Int!, input: UpdateTodoInput!): TodoEntity!
-  deleteTodo(id: Int!): TodoEntity!
 }
 
 input CreateUserInput {
   username: String!
+  email: String!
 }
 
 input CreateTodoInput {
   title: String!
-  assigneeId: Float!
-  assignedToId: Float!
-}
-
-input UpdateTodoInput {
-  title: String
-  assigneeId: Float
-  assignedToId: Float
+  assigneeId: String!
+  assignedToId: String!
 }

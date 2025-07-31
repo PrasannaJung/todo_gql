@@ -1,18 +1,18 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNumber, IsPositive, IsString } from 'class-validator';
+import { IsString, MinLength } from 'class-validator';
 
 @InputType()
 export class CreateTodoInput {
   @Field()
   @IsString()
+  @MinLength(5, { message: 'Title must be at least 5 characters' })
   title: string;
 
   @Field()
-  @IsNumber()
-  assigneeId: number;
+  @IsString()
+  assigneeId: string;
 
   @Field()
-  @IsNumber()
-  @IsPositive()
-  assignedToId: number;
+  @IsString()
+  assignedToId: string;
 }

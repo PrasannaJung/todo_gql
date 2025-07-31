@@ -3,6 +3,7 @@ import { UserEntity } from './entity/user.entity';
 import { Query } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { CreateUserInput } from './dto/create-user.dto';
+import { IsObjectIdPipe } from '@nestjs/mongoose';
 
 @Resolver(() => UserEntity)
 export class UserResolver {
@@ -13,8 +14,8 @@ export class UserResolver {
     return this.userService.getAllUsers();
   }
 
-  @Query(() => UserEntity, { name: 'me' })
-  getUser(@Args('id', { type: () => Int }) id: number) {
+  @Query(() => UserEntity, { name: 'user' })
+  getUser(@Args('id', IsObjectIdPipe) id: string) {
     return this.userService.getUserById(id);
   }
 
@@ -22,4 +23,9 @@ export class UserResolver {
   createUser(@Args('input') input: CreateUserInput) {
     return this.userService.createUser(input);
   }
+
+  // @Mutation(() => UserEntity)
+  // deleteUser(@Args('id', { type: () => Int }) id: number) {
+  //   return this.userService.deleteUser(id);
+  // }
 }
