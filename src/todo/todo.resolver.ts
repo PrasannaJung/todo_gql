@@ -46,7 +46,7 @@ export class TodoResolver {
   }
 
   @Query(() => TodoEntity, { name: 'todo' })
-  getTodoById(@Args('id') id: string): Promise<TodoDocument> {
+  getTodoById(@Args('id') id: string): Promise<TodoEntity> {
     return this.todoService.getTodoById(id);
   }
 
@@ -75,36 +75,26 @@ export class TodoResolver {
     return this.pubSub.asyncIterableIterator(TODO_ADDED_EVENT);
   }
 
-  // @Query(() => [TodoEntity])
-  // todosByUser(@Args('userId', { type: () => Int }) userId: number) {
-  //   return this.todoService.getTodosByUser(userId);
-  // }
+  @Subscription(() => TodoEntity, {
+    name: 'todoUpdated',
+    resolve: (payload) => {
+      return payload.todoUpdated;
+    },
+  })
+  todoUpdated(): AsyncIterator<TodoEntity> {
+    return this.pubSub.asyncIterableIterator('todoUpdated');
+  }
 
-  // @ResolveField(() => UserEntity, { name: 'assignee' })
-  // getAssignee(@Parent() parent: TodoDataStore) {
-  //   return this.userService.getUserById(parent.assigneeId);
-  // }
+  @ResolveField(() => UserEntity, { name: 'assignedTo' })
+  getAssigndTo(@Parent() parent: TodoEntity): Promise<UserEntity> {
+    return this.todoService.getTodoUser(parent.assignedTo);
+  }
 
-  // @ResolveField(() => UserEntity, { name: 'assignedTo' })
-  // getAssignedTo(@Parent() parent: TodoDataStore) {
-  //   return this.userService.getUserById(parent.assignedToId);
-  // }
-
-  // @Mutation(() => TodoEntity)
-  // updateTodo(
-  //   @Args('id', { type: () => Int }) id: number,
-  //   @Args('input') input: UpdateTodoInput,
-  // ) {
-  //   return this.todoService.updateTodo(id, input);
-  // }
-
-  // @Mutation(() => TodoEntity)
-  // deleteTodo(@Args('id', { type: () => Int }) id: number) {
-  //   return this.todoService.deleteTodo(id);
-  // }
-
-  // @Mutation(() => TodoEntity)
-  // toggleComplete(@Args('id', { type: () => Int }) id: number) {
-  //   return this.todoService.toggleComplete(id);
-  // }
+  @Query(() => TodoPaginationResponse)
+  todosByUser(
+    @Args('userId') userId: string,
+    @Args() paginationArgs: PaginationInputArgs,
+  ): Promise<TodoPaginationResponse> {
+    return this.todoService.getTodosByUser(userId, paginationArgs);
+  }
 }

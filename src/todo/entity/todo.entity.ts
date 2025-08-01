@@ -26,13 +26,11 @@ export class TodoEntity {
   @Expose()
   status: TodoStatus;
 
-  @Field(() => UserEntity)
+  @Field()
   @Expose()
-  @Type(() => UserEntity)
-  assignee: UserEntity;
+  assignee: string;
 
-  @Field(() => UserEntity)
+  @Field()
   @Expose()
-  @Type(() => UserEntity)
-  assignedTo: UserEntity;
+  assignedTo: string;
 }

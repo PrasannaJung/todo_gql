@@ -41,7 +41,7 @@ export class UserRepository implements UserRepositoryInterface {
 
   async update(id: string, data: Partial<User>): Promise<UserDocument | null> {
     return await this.userModel
-      .findByIdAndUpdate(id, data, { new: true })
+      .findByIdAndUpdate(id, { $set: data }, { new: true })
       .exec();
   }
 

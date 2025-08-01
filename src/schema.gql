@@ -2,17 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type UserEntity {
-  id: ID!
-  username: String!
-  email: String
-}
-
 type TodoEntity {
   id: ID!
   title: String!
   status: TodoStatus!
-  assignee: UserEntity!
+  assignee: String!
   assignedTo: UserEntity!
 }
 
@@ -20,6 +14,19 @@ type TodoEntity {
 enum TodoStatus {
   ACTIVE
   COMPLETED
+}
+
+type AddressEntity {
+  street: String!
+  area: String!
+  city: String!
+}
+
+type UserEntity {
+  id: ID!
+  username: String!
+  email: String!
+  address: AddressEntity
 }
 
 type CreateTodoResponse {
@@ -40,16 +47,34 @@ type UpdateTodoResponse {
   todo: TodoEntity!
 }
 
+type CreateUserResponse {
+  message: String!
+  user: UserEntity!
+}
+
+type UpdateUserResponse {
+  message: String!
+  user: UserEntity!
+}
+
+type DeleteUserResponse {
+  message: String!
+  user: UserEntity!
+}
+
 type Query {
   users: [UserEntity!]!
   user(id: String!): UserEntity!
   todos(page: Int! = 1, limit: Int! = 10): TodoPaginationResponse!
   allTodos: [TodoEntity!]!
   todo(id: String!): TodoEntity!
+  todosByUser(userId: String!, page: Int! = 1, limit: Int! = 10): TodoPaginationResponse!
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): UserEntity!
+  createUser(input: CreateUserInput!): CreateUserResponse!
+  updateUser(id: String!, input: UpdateUserInput!): UpdateUserResponse!
+  deleteUser(id: String!): DeleteUserResponse!
   createTodo(input: CreateTodoInput!): CreateTodoResponse!
   updateTodo(id: String!, input: UpdateTodoInput!): UpdateTodoResponse!
 }
@@ -59,10 +84,22 @@ input CreateUserInput {
   email: String!
 }
 
+input UpdateUserInput {
+  username: String
+  email: String
+  address: AddressInput
+}
+
+input AddressInput {
+  street: String
+  area: String
+  city: String
+}
+
 input CreateTodoInput {
   title: String!
-  assigneeId: String!
-  assignedToId: String!
+  assignee: String!
+  assignedTo: String!
 }
 
 input UpdateTodoInput {
@@ -72,4 +109,5 @@ input UpdateTodoInput {
 
 type Subscription {
   todoAdded: TodoEntity!
+  todoUpdated: TodoEntity!
 }

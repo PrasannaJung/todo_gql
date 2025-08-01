@@ -20,8 +20,8 @@ export class User {
   })
   address: {
     street: string;
+    area: string;
     city: string;
-    zipCode: string;
   };
 }
 

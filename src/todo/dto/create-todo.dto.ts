@@ -9,10 +9,10 @@ export class CreateTodoInput {
   title: string;
 
   @Field()
-  @IsMongoId({ message: 'assigneeId must be a valid Mongo ID' })
-  assigneeId: string;
+  @IsMongoId({ message: 'Assignee must be a valid Mongo ID' })
+  assignee: string;
 
   @Field()
-  @IsMongoId({ message: 'assignedToId must be a valid Mongo ID' })
-  assignedToId: string;
+  @IsMongoId({ message: 'AssignedTo must be a valid Mongo ID' })
+  assignedTo: string;
 }

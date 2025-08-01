@@ -7,6 +7,7 @@ export interface BaseRepository<T, DocumentType> {
   findOne(query: FilterQuery<T>): Promise<DocumentType | null>;
   findAll(): Promise<DocumentType[]>;
   findPaginatedData(
+    query: FilterQuery<T>,
     paginationArgs: PaginationInputArgs,
   ): Promise<PaginationResponseInterface<DocumentType>>;
   create(data: Partial<T>): Promise<DocumentType>;
