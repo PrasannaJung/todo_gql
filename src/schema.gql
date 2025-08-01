@@ -44,3 +44,7 @@ input CreateTodoInput {
   assigneeId: String!
   assignedToId: String!
 }
+
+type Subscription {
+  todoAdded: TodoEntity!
+}

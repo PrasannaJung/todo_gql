@@ -5,10 +5,11 @@ import {
   Parent,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql';
 import { TodoEntity } from './entity/todo.entity';
 import { Query } from '@nestjs/graphql';
-import { TodoService } from './todo.service';
+import { TODO_ADDED_EVENT, TodoService } from './todo.service';
 import { UserEntity } from 'src/user/entity/user.entity';
 import { UserService } from 'src/user/user.service';
 import { CreateTodoInput } from './dto/create-todo.dto';
@@ -38,6 +39,16 @@ export class TodoResolver {
     @Args('input') input: CreateTodoInput,
   ): Promise<TodoDocument> {
     return await this.todoService.createTodo(input);
+  }
+
+  @Subscription(() => TodoEntity, {
+    name: 'todoAdded',
+    resolve: (payload) => {
+      return payload.todoAdded;
+    },
+  })
+  postAdded(): AsyncIterator<TodoEntity> {
+    return this.todoService.getPubSub().asyncIterableIterator(TODO_ADDED_EVENT);
   }
 
   // @Query(() => [TodoEntity])

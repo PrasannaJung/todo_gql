@@ -17,6 +17,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       driver: ApolloDriver,
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      subscriptions: {
+        'graphql-ws': true,
+      },
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
