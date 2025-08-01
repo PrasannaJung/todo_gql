@@ -8,6 +8,6 @@ export class UserEntity {
   @Field()
   username: string;
 
-  @Field()
+  @Field({ nullable: true })
   email: string;
 }

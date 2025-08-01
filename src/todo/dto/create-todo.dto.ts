@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsString, MinLength } from 'class-validator';
+import { IsMongoId, IsString, MinLength } from 'class-validator';
 
 @InputType()
 export class CreateTodoInput {
@@ -9,10 +9,10 @@ export class CreateTodoInput {
   title: string;
 
   @Field()
-  @IsString()
+  @IsMongoId({ message: 'assigneeId must be a valid Mongo ID' })
   assigneeId: string;
 
   @Field()
-  @IsString()
+  @IsMongoId({ message: 'assignedToId must be a valid Mongo ID' })
   assignedToId: string;
 }

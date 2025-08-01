@@ -5,7 +5,7 @@
 type UserEntity {
   id: ID!
   username: String!
-  email: String!
+  email: String
 }
 
 type TodoEntity {
@@ -22,16 +22,36 @@ enum TodoStatus {
   COMPLETED
 }
 
+type CreateTodoResponse {
+  message: String!
+  todo: TodoEntity!
+}
+
+type TodoPaginationResponse {
+  items: [TodoEntity!]!
+  totalPages: Int!
+  currentPage: Int!
+  itemsPerPage: Int!
+  totalItems: Int!
+}
+
+type UpdateTodoResponse {
+  message: String!
+  todo: TodoEntity!
+}
+
 type Query {
   users: [UserEntity!]!
   user(id: String!): UserEntity!
-  todos: [TodoEntity!]!
+  todos(page: Int! = 1, limit: Int! = 10): TodoPaginationResponse!
+  allTodos: [TodoEntity!]!
   todo(id: String!): TodoEntity!
 }
 
 type Mutation {
   createUser(input: CreateUserInput!): UserEntity!
-  createTodo(input: CreateTodoInput!): TodoEntity!
+  createTodo(input: CreateTodoInput!): CreateTodoResponse!
+  updateTodo(id: String!, input: UpdateTodoInput!): UpdateTodoResponse!
 }
 
 input CreateUserInput {
@@ -43,6 +63,11 @@ input CreateTodoInput {
   title: String!
   assigneeId: String!
   assignedToId: String!
+}
+
+input UpdateTodoInput {
+  title: String
+  status: TodoStatus
 }
 
 type Subscription {

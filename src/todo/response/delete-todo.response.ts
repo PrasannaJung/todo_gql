@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { TodoEntity } from '../entity/todo.entity';
 import { BaseResponse } from 'src/common/response/base.response';
+import { TodoEntity } from '../entity/todo.entity';
 
 @ObjectType()
-export class CreateTodoResponse extends BaseResponse {
+export class DeleteTodoResponse extends BaseResponse {
   @Field(() => TodoEntity)
   todo: TodoEntity;
 }

@@ -3,6 +3,8 @@ import { UserRepositoryInterface } from './interface/user-repository.interface';
 import { UserDocument, User } from './schema/user.schema';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { PaginationInputArgs } from 'src/common/dto/pagination-input';
+import { PaginationResponseInterface } from 'src/common/interface/pagination-response.interface';
 
 @Injectable()
 export class UserRepository implements UserRepositoryInterface {
@@ -10,6 +12,11 @@ export class UserRepository implements UserRepositoryInterface {
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
   ) {}
+  findPaginatedData(
+    paginationArgs: PaginationInputArgs,
+  ): Promise<PaginationResponseInterface<UserDocument>> {
+    throw new Error('Method not implemented.');
+  }
 
   async findByEmail(email: string): Promise<UserDocument | null> {
     return await this.userModel.findOne({ email }).exec();

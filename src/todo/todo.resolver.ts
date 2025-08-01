@@ -16,16 +16,32 @@ import { CreateTodoInput } from './dto/create-todo.dto';
 import { UpdateTodoInput } from './dto/update-todo.dto';
 import { CreateTodoResponse } from './response/create-todo.response';
 import { Todo, TodoDocument } from './schema/todo.schema';
+import { TodoPaginationResponse } from './response/todo-pagination.response';
+import { PaginationInputArgs } from 'src/common/dto/pagination-input';
+import { Inject } from '@nestjs/common';
+import { PUB_SUB } from 'src/common/module/pub-sub.module';
+import { PubSub } from 'graphql-subscriptions';
+import { UpdateTodoResponse } from './response/update-todo.response';
+import { IsObjectIdPipe } from '@nestjs/mongoose';
 
 @Resolver(() => TodoEntity)
 export class TodoResolver {
   constructor(
     private readonly todoService: TodoService,
+    @Inject(PUB_SUB) private readonly pubSub: PubSub,
+
     // private readonly userService: UserService,
   ) {}
 
-  @Query(() => [TodoEntity], { name: 'todos' })
-  getTodos(): Promise<TodoDocument[]> {
+  @Query(() => TodoPaginationResponse, { name: 'todos' })
+  getTodos(
+    @Args() paginationArgs: PaginationInputArgs,
+  ): Promise<TodoPaginationResponse> {
+    return this.todoService.getPaginatedTodos(paginationArgs);
+  }
+
+  @Query(() => [TodoEntity], { name: 'allTodos' })
+  getAllTodos(): Promise<TodoDocument[]> {
     return this.todoService.getAllTodos();
   }
 
@@ -34,11 +50,19 @@ export class TodoResolver {
     return this.todoService.getTodoById(id);
   }
 
-  @Mutation(() => TodoEntity)
+  @Mutation(() => CreateTodoResponse)
   async createTodo(
     @Args('input') input: CreateTodoInput,
-  ): Promise<TodoDocument> {
-    return await this.todoService.createTodo(input);
+  ): Promise<CreateTodoResponse> {
+    return this.todoService.createTodo(input);
+  }
+
+  @Mutation(() => UpdateTodoResponse)
+  async updateTodo(
+    @Args('id', IsObjectIdPipe) id: string,
+    @Args('input') input: UpdateTodoInput,
+  ): Promise<UpdateTodoResponse> {
+    return this.todoService.updateTodo(id, input);
   }
 
   @Subscription(() => TodoEntity, {
@@ -48,7 +72,7 @@ export class TodoResolver {
     },
   })
   postAdded(): AsyncIterator<TodoEntity> {
-    return this.todoService.getPubSub().asyncIterableIterator(TODO_ADDED_EVENT);
+    return this.pubSub.asyncIterableIterator(TODO_ADDED_EVENT);
   }
 
   // @Query(() => [TodoEntity])

@@ -8,7 +8,7 @@ import { UserRepositoryInterface } from './interface/user-repository.interface';
 @Injectable()
 export class UserService {
   constructor(
-    private readonly todoService: TodoService,
+    // private readonly todoService: TodoService,
     @Inject('USER_REPO_TOKEN')
     private readonly userRepository: UserRepositoryInterface,
   ) {}

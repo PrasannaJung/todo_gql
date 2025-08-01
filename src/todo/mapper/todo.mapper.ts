@@ -3,7 +3,9 @@ import { TodoEntity } from '../entity/todo.entity';
 import { TodoDocument } from '../schema/todo.schema';
 
 export const toTodoEntity = (data: TodoDocument): TodoEntity => {
-  return plainToInstance(TodoEntity, data);
+  return plainToInstance(TodoEntity, data, {
+    excludeExtraneousValues: true,
+  });
 };
 
 export const toTodoEntityList = (data: TodoDocument[]): TodoEntity[] => {

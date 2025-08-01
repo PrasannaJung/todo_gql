@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { UserEntity } from 'src/user/entity/user.entity';
 
 export enum TodoStatus {
@@ -28,9 +28,11 @@ export class TodoEntity {
 
   @Field(() => UserEntity)
   @Expose()
+  @Type(() => UserEntity)
   assignee: UserEntity;
 
   @Field(() => UserEntity)
   @Expose()
+  @Type(() => UserEntity)
   assignedTo: UserEntity;
 }

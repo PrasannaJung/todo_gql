@@ -8,7 +8,7 @@ export class Todo {
   title: string;
 
   @Prop({ type: String, enum: TodoStatus, default: TodoStatus.ACTIVE })
-  status: string;
+  status: TodoStatus;
 
   @Prop({
     type: {
