@@ -6,8 +6,7 @@ type TodoEntity {
   id: ID!
   title: String!
   status: TodoStatus!
-  assignee: String!
-  assignedTo: UserEntity!
+  user: UserEntity!
 }
 
 """The status of the todo task"""
@@ -47,6 +46,11 @@ type UpdateTodoResponse {
   todo: TodoEntity!
 }
 
+type DeleteTodoResponse {
+  message: String!
+  todo: TodoEntity!
+}
+
 type UpdateUserResponse {
   message: String!
   user: UserEntity!
@@ -73,7 +77,8 @@ type Query {
   todos(page: Int! = 1, limit: Int! = 10): TodoPaginationResponse!
   allTodos: [TodoEntity!]!
   todo(id: String!): TodoEntity!
-  todosByUser(userId: String!, page: Int! = 1, limit: Int! = 10): TodoPaginationResponse!
+  myTodos(page: Int! = 1, limit: Int! = 10): TodoPaginationResponse!
+  me: String!
 }
 
 type Mutation {
@@ -81,6 +86,7 @@ type Mutation {
   deleteUser(id: String!): DeleteUserResponse!
   createTodo(input: CreateTodoInput!): CreateTodoResponse!
   updateTodo(id: String!, input: UpdateTodoInput!): UpdateTodoResponse!
+  deleteTodo(id: String!): DeleteTodoResponse!
   register(input: RegisterUserInput!): CreateUserResponse!
   login(input: LoginUserInput!): LoginResponse!
 }
@@ -99,8 +105,6 @@ input AddressInput {
 
 input CreateTodoInput {
   title: String!
-  assignee: String!
-  assignedTo: String!
 }
 
 input UpdateTodoInput {
@@ -120,6 +124,6 @@ input LoginUserInput {
 }
 
 type Subscription {
-  todoAdded: TodoEntity!
   todoUpdated: TodoEntity!
+  todoAdded: TodoEntity!
 }

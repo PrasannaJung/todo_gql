@@ -13,15 +13,9 @@ export class Todo {
   @Prop({
     type: Types.ObjectId,
     ref: 'User',
-  })
-  assignee: string;
-
-  @Prop({
-    type: Types.ObjectId,
-    ref: 'User',
     required: true,
   })
-  assignedTo: string;
+  user: string;
 }
 
 export const TodoSchema = SchemaFactory.createForClass(Todo);

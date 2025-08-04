@@ -28,9 +28,5 @@ export class TodoEntity {
 
   @Field()
   @Expose()
-  assignee: string;
-
-  @Field()
-  @Expose()
-  assignedTo: string;
+  user: string;
 }

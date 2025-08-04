@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { RegisterUserInput } from './dto/register-input.dto';
 import { GqlLocalAuthGuard } from './guards/gql-local-auth.guard';
@@ -8,6 +8,8 @@ import { CreateUserResponse } from 'src/user/response/create-user.response';
 import { LoginUserInput } from './dto/login-input.dto';
 import { UserEntity } from 'src/user/entity/user.entity';
 import { LoginResponse } from './response/login.response';
+import { GqlJwtAuthGuard } from './guards/gql-jwt-auth.guard';
+import { JwtPayload } from 'src/common/interface/jwt-payload.interface';
 
 @Resolver()
 export class AuthResolver {
@@ -27,5 +29,11 @@ export class AuthResolver {
     @CurrentUser() user: UserEntity,
   ): Promise<LoginResponse> {
     return await this.authService.login(user);
+  }
+
+  @Query(() => String, { name: 'me' })
+  @UseGuards(GqlJwtAuthGuard)
+  async getMe(@CurrentUser() user: JwtPayload): Promise<string> {
+    return user.email;
   }
 }

@@ -6,6 +6,9 @@ import { UserModule } from 'src/user/user.module';
 import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { GqlJwtAuthGuard } from './guards/gql-jwt-auth.guard';
+import { GqlLocalAuthGuard } from './guards/gql-local-auth.guard';
 
 @Module({
   imports: [
@@ -21,6 +24,14 @@ import { LocalStrategy } from './strategies/local.strategy';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, AuthResolver, LocalStrategy],
+  providers: [
+    AuthService,
+    AuthResolver,
+    LocalStrategy,
+    JwtStrategy,
+    GqlLocalAuthGuard,
+    GqlJwtAuthGuard,
+  ],
+  exports: [AuthService, JwtModule, GqlJwtAuthGuard],
 })
 export class AuthModule {}

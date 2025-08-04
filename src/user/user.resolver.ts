@@ -8,6 +8,7 @@ import { CreateUserResponse } from './response/create-user.response';
 import { UpdateUserResponse } from './response/update-user.response';
 import { UpdateUserInput } from './dto/update-user.dto';
 import { DeleteUserResponse } from './response/delete-user.response';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver(() => UserEntity)
 export class UserResolver {
@@ -22,13 +23,6 @@ export class UserResolver {
   getUser(@Args('id', IsObjectIdPipe) id: string) {
     return this.userService.getUserById(id);
   }
-
-  // @Mutation(() => CreateUserResponse)
-  // createUser(
-  //   @Args('input') input: CreateUserInput,
-  // ): Promise<CreateUserResponse> {
-  //   return this.userService.createUser(input);
-  // }
 
   @Mutation(() => UpdateUserResponse)
   updateUser(

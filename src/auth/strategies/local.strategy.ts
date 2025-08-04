@@ -16,12 +16,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     By default, Passport extracts the 'username' and 'password' from the request body. We call the super constructor with `usernameField: 'email'` to tell Passport to use 'email' field from the request object instead of 'username'.
   */
   async validate(email: string, password: string): Promise<UserEntity> {
-    console.log(
-      'STRATEGY VALIDATE FUNCTION CALLED WITH EMAIL:',
-      email,
-      'AND PASSWORD:',
-      password,
-    );
     const user = await this.authService.validateUser(email, password);
     return user; // this will automatically be added to the request object as req.user by Passport
   }

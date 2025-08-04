@@ -19,7 +19,20 @@ import { AuthModule } from './auth/auth.module';
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       subscriptions: {
-        'graphql-ws': true,
+        'graphql-ws': {
+          onConnect: (context) => {
+            console.log(
+              'A CLIENT CONNECTED TO THE WS SERVER',
+              context.connectionParams,
+            );
+          },
+          onDisconnect: () => {
+            console.log('A CLIENT DISCONNECTED');
+          },
+          onClose: () => {
+            console.log('Connection closed');
+          },
+        },
       },
     }),
     ConfigModule.forRoot({ isGlobal: true }),

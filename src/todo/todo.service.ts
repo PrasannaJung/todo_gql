@@ -15,6 +15,8 @@ import { DeleteTodoResponse } from './response/delete-todo.response';
 import { toUserEntity } from 'src/user/mapper/user.mapper';
 import mongoose from 'mongoose';
 import { Args } from '@nestjs/graphql';
+import { use } from 'passport';
+import { TodoEntity } from './entity/todo.entity';
 
 export const TODO_ADDED_EVENT = 'todoAdded';
 export const TODO_UPDATED_EVENT = 'todoUpdated';
@@ -28,13 +30,16 @@ export class TodoService {
     private readonly userService: UserService,
   ) {}
 
-  async createTodo(input: CreateTodoInput): Promise<CreateTodoResponse> {
-    const assignedTo = await this.userService.getUserById(input.assignedTo);
-    if (!assignedTo) {
+  async createTodo(
+    input: CreateTodoInput,
+    userId: string,
+  ): Promise<CreateTodoResponse> {
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
       throw new NotFoundException('Assigned user not found');
     }
 
-    const todo = await this.todoRepository.create(input);
+    const todo = await this.todoRepository.create({ ...input, user: userId });
 
     const todoEntityType = toTodoEntity(todo);
     this.pubSub.publish(TODO_ADDED_EVENT, {
@@ -47,8 +52,9 @@ export class TodoService {
     };
   }
 
-  async getAllTodos() {
-    return await this.todoRepository.findAll();
+  async getAllTodos(): Promise<TodoEntity[]> {
+    const todos = await this.todoRepository.findAll();
+    return toTodoEntityList(todos);
   }
 
   async getPaginatedTodos(
@@ -70,7 +76,17 @@ export class TodoService {
   async updateTodo(
     id: string,
     input: UpdateTodoInput,
+    userId: string,
   ): Promise<UpdateTodoResponse> {
+    const todo = await this.todoRepository.findById(id);
+    if (!todo) {
+      throw new NotFoundException('Todo with the given id not found');
+    }
+
+    if (todo.user.toString() !== userId) {
+      throw new NotFoundException('You are not authorized to update this todo');
+    }
+
     const updatedTodo = await this.todoRepository.update(id, input);
     if (!updatedTodo) {
       throw new NotFoundException('Todo with the given id not found');
@@ -88,7 +104,16 @@ export class TodoService {
     };
   }
 
-  async deleteTodo(id: string): Promise<DeleteTodoResponse> {
+  async deleteTodo(id: string, userId: string): Promise<DeleteTodoResponse> {
+    const todo = await this.todoRepository.findById(id);
+    if (!todo) {
+      throw new NotFoundException('Todo with the given id not found');
+    }
+
+    if (todo.user.toString() !== userId) {
+      throw new NotFoundException('You are not authorized to delete this todo');
+    }
+
     const deletedTodo = await this.todoRepository.deleteById(id);
     if (!deletedTodo) {
       throw new NotFoundException('Todo with the given id not found');
@@ -116,7 +141,7 @@ export class TodoService {
   ): Promise<TodoPaginationResponse> {
     return await this.todoRepository.findPaginatedData(
       {
-        assignedTo: userId,
+        user: userId,
       },
       paginationArgs,
     );
