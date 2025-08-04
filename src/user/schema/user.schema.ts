@@ -9,6 +9,9 @@ export class User {
   @Prop({ required: true })
   email: string;
 
+  @Prop()
+  password: string;
+
   @Prop({
     type: {
       street: String,
