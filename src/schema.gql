@@ -47,11 +47,6 @@ type UpdateTodoResponse {
   todo: TodoEntity!
 }
 
-type CreateUserResponse {
-  message: String!
-  user: UserEntity!
-}
-
 type UpdateUserResponse {
   message: String!
   user: UserEntity!
@@ -60,6 +55,16 @@ type UpdateUserResponse {
 type DeleteUserResponse {
   message: String!
   user: UserEntity!
+}
+
+type CreateUserResponse {
+  message: String!
+  user: UserEntity!
+}
+
+type LoginResponse {
+  message: String!
+  accessToken: String!
 }
 
 type Query {
@@ -72,16 +77,12 @@ type Query {
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): CreateUserResponse!
   updateUser(id: String!, input: UpdateUserInput!): UpdateUserResponse!
   deleteUser(id: String!): DeleteUserResponse!
   createTodo(input: CreateTodoInput!): CreateTodoResponse!
   updateTodo(id: String!, input: UpdateTodoInput!): UpdateTodoResponse!
-}
-
-input CreateUserInput {
-  username: String!
-  email: String!
+  register(input: RegisterUserInput!): CreateUserResponse!
+  login(input: LoginUserInput!): LoginResponse!
 }
 
 input UpdateUserInput {
@@ -105,6 +106,17 @@ input CreateTodoInput {
 input UpdateTodoInput {
   title: String
   status: TodoStatus
+}
+
+input RegisterUserInput {
+  username: String!
+  email: String!
+  password: String!
+}
+
+input LoginUserInput {
+  email: String!
+  password: String!
 }
 
 type Subscription {

@@ -23,12 +23,12 @@ export class UserResolver {
     return this.userService.getUserById(id);
   }
 
-  @Mutation(() => CreateUserResponse)
-  createUser(
-    @Args('input') input: CreateUserInput,
-  ): Promise<CreateUserResponse> {
-    return this.userService.createUser(input);
-  }
+  // @Mutation(() => CreateUserResponse)
+  // createUser(
+  //   @Args('input') input: CreateUserInput,
+  // ): Promise<CreateUserResponse> {
+  //   return this.userService.createUser(input);
+  // }
 
   @Mutation(() => UpdateUserResponse)
   updateUser(
