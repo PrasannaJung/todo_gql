@@ -18,7 +18,7 @@ import { GqlLocalAuthGuard } from './guards/gql-local-auth.guard';
       useFactory: async (configService: ConfigService) => {
         return {
           secret: configService.get<string>('JWT_SECRET') || 'JWT_SECRET',
-          signOptions: { expiresIn: '30m' },
+          signOptions: { expiresIn: '7h' },
         };
       },
       inject: [ConfigService],

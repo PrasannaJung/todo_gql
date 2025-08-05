@@ -102,7 +102,17 @@ export class TodoResolver {
 
   @Subscription(() => TodoEntity, {
     name: 'todoAdded',
-    resolve: (payload) => {
+    filter: (payload, _, context) => {
+      console.log('User in subscription context:', context.user);
+
+      const user = context.user;
+      if (payload.todoAdded.user.toString() !== user.sub) {
+        return false;
+      }
+      return true;
+    },
+    resolve: (payload, _, context) => {
+      console.log('User in subscription context:', context.user);
       return payload.todoAdded;
     },
   })
